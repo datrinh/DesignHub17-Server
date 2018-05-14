@@ -39,24 +39,25 @@ spHandler.prototype.init = function (socketHandler) {
  *   productId: 'EA60' }
  */
 spHandler.prototype.portHandler = function (port) {
+    console.log(port);
     const sp = new SerialPort(port.comName, { baudRate: config.baudRate });
 
-    // switch (port.serialNumber) {
-    //     case config.bracelet.serialNumber:
-    //         if (bracelet === null) bracelet = sp;
-    //         break;
-    //     case config.belt.serialNumber:
-    //         if (belt === null) belt = sp;
-    //         break;
-    //     default:
-    //         break;
-    // }
+    switch (port.serialNumber) {
+        case config.bracelet.serialNumber:
+            if (bracelet === null) bracelet = sp;
+            break;
+        case config.belt.serialNumber:
+            if (belt === null) belt = sp;
+            break;
+        default:
+            break;
+    }
 
-    if (belt === null)
-        belt = sp;
-    else
-        if (bracelet === null)
-            bracelet = sp;
+    // if (belt === null)
+    //     belt = sp;
+    // else
+    //     if (bracelet === null)
+    //         bracelet = sp;
 
     return sp;
 }
@@ -87,9 +88,16 @@ spHandler.prototype.emit = function (port, msg) {
 }
 
 spHandler.prototype.dataHandler = function (data) {
-    // loggerStdoutNl(data);
-    if (data === 'playPause') {
-        this.soch.playExample();
+    loggerStdoutNl(data);
+    switch (data) {
+        case 'playPause':
+            this.soch.io.emit('bobble', JSON.stringify({ action: 'PLAYPAUSE' }));
+            break;
+        case 'prev':
+            this.soch.playExample();
+            break;
+        default:
+            break;
     }
 }
 
